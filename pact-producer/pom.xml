@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>pact-system</artifactId>
+        <groupId>com.xabe</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>pact-producer</artifactId>
+
+    <properties>
+        <jersey.version>2.27</jersey.version>
+        <main.class>com.xabe.producer.App</main.class>
+        <app.config.dir>${project.build.outputDirectory}</app.config.dir>
+        <tmp.dir>${project.build.directory}${file.separator}logs</tmp.dir>
+        <app.name>producer</app.name>
+    </properties>
+
+    <dependencies>
+
+        <!-- Grizzly and Jersey -->
+
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-grizzly2-servlet</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.connectors</groupId>
+            <artifactId>jersey-grizzly-connector</artifactId>
+            <version>${jersey.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.slf4j</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-common</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.inject</groupId>
+            <artifactId>jersey-hk2</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-server</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.ext</groupId>
+            <artifactId>jersey-bean-validation</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-multipart</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-jackson</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.8.10</version>
+        </dependency>
+
+    </dependencies>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>2.10</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>target/lib</outputDirectory>
+                            <overWriteReleases>false</overWriteReleases>
+                            <overWriteSnapshots>false</overWriteSnapshots>
+                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <excludeScope>test</excludeScope>
+                            <includeScope>compile</includeScope>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.bazaarvoice.maven.plugins</groupId>
+                <artifactId>process-exec-maven-plugin</artifactId>
+                <version>0.7</version>
+                <executions>
+                    <execution>
+                        <id>process</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                        <configuration>
+                            <name>app</name>
+                            <waitForInterrupt>false</waitForInterrupt>
+                            <healthcheckUrl>http://localhost:8008/user-service/user/status</healthcheckUrl>
+                            <waitAfterLaunch>30</waitAfterLaunch>
+                            <processLogFile>${project.build.directory}/logs/console.out</processLogFile>
+                            <arguments>
+                                <argument>java</argument>
+                                <argument>-Xmx512M</argument>
+                                <argument>-Xms512M</argument>
+                                <argument>-Xss512K</argument>
+                                <argument>-XX:MetaspaceSize=128M</argument>
+                                <argument>-XX:MaxMetaspaceSize=128M</argument>
+                                <argument>-XX:+UseParallelGC</argument>
+                                <argument>-Djava.security.egd=file:/dev/./urandom</argument>
+                                <argument>-Dsun.rmi.dgc.client.gcInterval=3600000</argument>
+                                <argument>-Dsun.rmi.dgc.server.gcInterval=3600000</argument>
+                                <argument>-Xdebug</argument>
+                                <argument>-Xlog:gc*</argument>
+                                <argument>-verbose:gc</argument>
+                                <argument>-Xloggc:${tmp.dir}/${app.name}_GC</argument>
+                                <argument>-XX:+HeapDumpOnOutOfMemoryError</argument>
+                                <argument>-XX:HeapDumpPath=${tmp.dir}/dump.hprof</argument>
+                                <argument>-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=8000</argument>
+                                <argument>-Dorg.jboss.logging.provider=slf4j</argument>
+                                <argument>-DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector</argument>
+                                <argument>-DAsyncLogger.RingBufferSize=128</argument>
+                                <argument>-Dorg.apache.logging.log4j.simplelog.StatusLogger.level=DEBUG</argument>
+                                <argument>-Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager</argument>
+                                <argument>-Dlog4j.configurationFile=file://${app.config.dir}${file.separator}log4j2.xml</argument>
+                                <argument>-Dapp.log.path=${tmp.dir}</argument>
+                                <argument>-Dapp.log.name=${app.name}</argument>
+                                <argument>-cp</argument>
+                                <argument>${project.build.directory}${file.separator}${project.artifactId}-${project.version}.jar${path.separator}${project.build.directory}${file.separator}lib${file.separator}*</argument>
+                                <argument>${main.class}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-all</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>stop-all</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+
+    </build>
+
+</project>

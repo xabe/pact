@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>pact-system</artifactId>
+        <groupId>com.xabe</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>pact-consumer</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.eclipse</groupId>
+            <artifactId>yasson</artifactId>
+            <version>1.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.json</artifactId>
+            <version>1.1.4</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>au.com.dius</groupId>
+                <artifactId>pact-jvm-provider-maven_2.12</artifactId>
+                <version>3.6.2</version>
+                <configuration>
+                    <pactDirectory>${project.build.directory}/target/pacts</pactDirectory>
+                    <pactBrokerUrl>http://localhost:80</pactBrokerUrl>
+                    <pactBrokerPassword>pact</pactBrokerPassword>
+                    <pactBrokerUsername>pact</pactBrokerUsername>
+                    <projectVersion>1.0.0</projectVersion>
+                    <trimSnapshot>true</trimSnapshot>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>pact-publish</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>publish</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
