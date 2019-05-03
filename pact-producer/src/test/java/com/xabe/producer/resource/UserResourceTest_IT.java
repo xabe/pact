@@ -13,7 +13,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-@Provider("provider")
+@Provider("user-provider")
 @VerificationReports({"console", "markdown"})
 @PactBroker(host = "localhost", port = "80", authentication = @PactBrokerAuth(username = "pact", password = "pact"))
 public class UserResourceTest_IT {
@@ -29,7 +29,7 @@ public class UserResourceTest_IT {
         context.verifyInteraction();
     }
 
-    @State({"provider get a person with id 1"})
+    @State({"User 1 exists"})
     public void toValid() {
     }
 

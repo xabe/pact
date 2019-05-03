@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 
 @ExtendWith(PactConsumerTestExt.class)
-@PactTestFor(providerName = "provider", port = "8888", hostInterface = "localhost", providerType = ProviderType.SYNCH)
+@PactTestFor(providerName = "user-provider", port = "8888", hostInterface = "localhost", providerType = ProviderType.SYNCH)
 public class ConsumerTest {
 
     private ConsumerUser consumerUser;
@@ -29,12 +29,12 @@ public class ConsumerTest {
     }
 
 
-    @Pact(state = "provider get a person", provider = "provider", consumer = "test_user_consumer")
+    @Pact(state = "User 1 exists", provider = "user-provider", consumer = "user-consumer")
     RequestResponsePact getPersonPact(PactDslWithProvider builder) {
         // @formatter:off
         return builder
-                .given("provider get a person with id 1")
-                .uponReceiving("a request to GET a person")
+                .given("User 1 exists")
+                .uponReceiving("A request to /user-service/user/1") //description of the contract
                 .path("/user-service/user/1")
                 .method("GET")
                 .willRespondWith()

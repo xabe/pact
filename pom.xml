@@ -265,6 +265,7 @@
                         <org.slf4j.simpleLogger.dateTimeFormat>yyyy-MM-dd HH:mm:ss:SSS Z
                         </org.slf4j.simpleLogger.dateTimeFormat>
                         <org.slf4j.simpleLogger.showThreadName>true</org.slf4j.simpleLogger.showThreadName>
+                        <pact.rootDir>pacts</pact.rootDir>
                     </systemPropertyVariables>
                     <classpathDependencyExcludes>
                         <classpathDependencyExcludes>org.apache.logging.log4j:log4j-slf4j-impl

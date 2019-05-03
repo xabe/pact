@@ -31,12 +31,15 @@
                 <artifactId>pact-jvm-provider-maven_2.12</artifactId>
                 <version>3.6.2</version>
                 <configuration>
-                    <pactDirectory>${project.build.directory}/target/pacts</pactDirectory>
+                    <pactDirectory>${project.build.directory}/pacts</pactDirectory>
                     <pactBrokerUrl>http://localhost:80</pactBrokerUrl>
                     <pactBrokerPassword>pact</pactBrokerPassword>
                     <pactBrokerUsername>pact</pactBrokerUsername>
-                    <projectVersion>1.0.0</projectVersion>
+                    <projectVersion>1.0.0</projectVersion> <!-- GIT_COMMIT -->
                     <trimSnapshot>true</trimSnapshot>
+                    <tags>
+                        <tag>0405930293049</tag> <!-- BRANCH_NAME -->
+                    </tags>
                 </configuration>
                 <executions>
                     <execution>

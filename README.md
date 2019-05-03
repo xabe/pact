@@ -46,13 +46,21 @@ docker run --name pactbroker --link pactbroker-db:postgres -e PACT_BROKER_DATABA
 o con docker compose 
 
 ```
-docker-compose up
+docker-compose up -d
 ```
 
-## Ejecución y Comprobación
+## Ejecución de consumidor
 
 ```
+cd pact-consumer/
 mvn clean install
+```
+
+## Ejecución de productor y verificación
+
+```
+cd pact-consumer/
+mvn clean install -Dpact.provider.version=0405930293049 -Dpact.verifier.publishResults=true -Dpactbroker.tags=prod
 ```
 
 ![](images/pact.png)
